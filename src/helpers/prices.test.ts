@@ -8,7 +8,7 @@ beforeAll(() => {
 describe('ExchangePrice Class', () => {
 	it('Should return a Exchenge Object ', async () => {
 		if (exchange !== null) {
-
+			
 			const price = await exchange.getPrice()
 
 			expect(price).toHaveProperty('cotacaoCompra')
