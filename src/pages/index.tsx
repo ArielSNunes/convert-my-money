@@ -1,12 +1,23 @@
 import type { NextPage } from 'next'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import PageTitle from '../components/PageTitle'
 import { convert, toMoney } from '../helpers/convert'
+import { ExchangePrice } from '../helpers/prices'
 
 const Home: NextPage = () => {
 	const [cotacaoDolar, setCotacaoDolar] = useState<number>(5.26)
 	const [valorConverter, setValorConverter] = useState<number>(0)
 	const [valorConvertido, setValorConvertido] = useState<number>(0)
+
+	const exchange = new ExchangePrice()
+
+	useEffect(() => {
+		exchange
+			.getPrice()
+			.then(({ cotacaoCompra }) => {
+				setCotacaoDolar(cotacaoCompra)
+			})
+	}, [cotacaoDolar])
 
 	const atualizaValorConverter = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = parseFloat(e.target.value)
@@ -26,12 +37,6 @@ const Home: NextPage = () => {
 			<h1 className='text-center text-2xl font-bold'>
 				ConvertMyMoney
 			</h1>
-			{
-				valorConvertido > 0 &&
-				<h3>
-					Valor convertido: R${toMoney(valorConvertido)}
-				</h3>
-			}
 			<form onSubmit={onFormSubmit}>
 				<div className='flex justify-center flex-col mt-7'>
 					<p>
@@ -57,6 +62,12 @@ const Home: NextPage = () => {
 					</button>
 				</div>
 			</form>
+			{
+				valorConvertido > 0 &&
+				<h3 className='text-xl mt-10 text-green-500'>
+					Valor convertido: R${toMoney(valorConvertido)}
+				</h3>
+			}
 		</div>
 	)
 }
