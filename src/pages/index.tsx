@@ -1,23 +1,28 @@
-import type { NextPage } from 'next'
+import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import PageTitle from '../components/PageTitle'
 import { convert, toMoney } from '../helpers/convert'
-import { ExchangePrice } from '../helpers/prices'
+import { Exchange, ExchangePrice } from '../helpers/prices'
 
-const Home: NextPage = () => {
-	const [cotacaoDolar, setCotacaoDolar] = useState<number>(5.26)
+export interface HomePageProps {
+	cotacao: Exchange
+}
+
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async () => {
+	const exchange = new ExchangePrice()
+	const cotacao = await exchange.getPrice()
+
+	return {
+		props: {
+			cotacao
+		}
+	}
+}
+
+const Home: NextPage<HomePageProps> = ({ cotacao: { cotacaoCompra } }) => {
+	const [cotacaoDolar, setCotacaoDolar] = useState<number>(cotacaoCompra)
 	const [valorConverter, setValorConverter] = useState<number>(0)
 	const [valorConvertido, setValorConvertido] = useState<number>(0)
-
-	const exchange = new ExchangePrice()
-
-	useEffect(() => {
-		exchange
-			.getPrice()
-			.then(({ cotacaoCompra }) => {
-				setCotacaoDolar(cotacaoCompra)
-			})
-	}, [cotacaoDolar])
 
 	const atualizaValorConverter = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = parseFloat(e.target.value)
