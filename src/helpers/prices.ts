@@ -8,7 +8,7 @@ export type Exchange = {
 
 export class ExchangePrice {
 	getUrl(data: string = ''): string {
-		return `https://olinda.bcbd.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='02-11-2022'&$top=100&$format=json&$select=cotacaoCompra,cotacaoVenda,dataHoraCotacao`
+		return `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='02-11-2022'&$top=100&$format=json&$select=cotacaoCompra,cotacaoVenda,dataHoraCotacao`
 	}
 
 	extractPrices(data: Exchange[]) {
@@ -23,7 +23,6 @@ export class ExchangePrice {
 	async getPrice(): Promise<Exchange> {
 		try {
 			const today = this.getToday()
-			console.log(today)
 			const url = this.getUrl(today)
 			const response = await axios.get<{ value: Exchange[] }>(url)
 			const { data } = response
